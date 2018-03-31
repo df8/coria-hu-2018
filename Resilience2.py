@@ -3,10 +3,14 @@ Created on Jan 18, 2018
 
 @author: Natalie
 
-based on NetworkX 1.0 connectivity.cuts using (s,t)-minimum cut
+based on NetworkX 1.0 connectivity.cuts using (s,t)-minimum cut [1] or METIS for Python [2]
+[1] is not fulfilling the required algorithm by [3], [2] needs prior installation of several tools, compilers and packages
+please follow the documentation
     
 references 
 [1]Abdol-Hossein Esfahanian. Connectivty Algorithms. http://www.cse.msu.edu/~cse835/Papers/Graph_connectivity_revised.pdf
+[2]https://metis.readthedocs.io/en/latest/
+[3]Oehlers, Milena and Fabian, Benjamin: Graph Metrics for Internet Robustness: A Survey. Submitted for review in March 2018.
 '''
 
 import networkx as nx
@@ -48,7 +52,8 @@ def local_resilience(G, h, i):
         raise ValueError("h-hop environment radius is not a natural number")
     
     if G.has_node(i):
-        return len(nx.minimum_node_cut(nx.ego_graph(G, i, h)))        
+        return len(nx.minimum_node_cut(nx.ego_graph(G, i, h)))  
+        #return len(metis.part_graph(nx.ego_graph(G, i, h)))  
     else:
         raise ValueError("{0} is not in given Graph".format(i))
 
@@ -70,6 +75,7 @@ def global_resilience(G):
             h_ball = nx.ego_graph(G,n,h)
             n_count = len(h_ball)
             Rih = len(nx.minimum_node_cut(h_ball))
+            #Rih = len(metis.part_graph(h_ball))
             n_sum += n_count
             Rnh_sum += Rih
         
