@@ -12,7 +12,6 @@ references
 import networkx as nx
 import matplotlib.pyplot as plt
 import random
-from networkx.algorithms.dag import dag_longest_path
 #import metis 
 
 
@@ -98,7 +97,10 @@ def plot_global_resilience(x, y):
     plt.title('Global Resilience')
     plt.plot(x, y)
     plt.show()
-    
+ 
+# check whether a Graph is simple or directed and computes whether the graph is connected or not accordingly
+# for simple and directed graph the computation of a connected graph differ
+# therefore different methods have to be applied      
 def check_connection(Graph):
     if nx.is_directed(Graph):
         return nx.is_weakly_connected(Graph)
