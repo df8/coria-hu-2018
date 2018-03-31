@@ -1,16 +1,14 @@
 import networkx as nx
 
 
-
-# Reconstruction:
-def effective_load_accumulate_dijkstra_paths(P, start, dest):
+def _accumulate_dijkstra_paths(P, start, dest):
     i = dest
     outp_common = [i]
     outp = []
     while(P[i]):
         if(len(P[i]) > 1):
             for j in P[i]:
-                variants = effective_load_accumulate_dijkstra_paths(P, start, j) 
+                variants = _accumulate_dijkstra_paths(P, start, j) 
                 outp2 = []
                 for m in variants:
                     outp2.append(m + outp_common)
@@ -23,7 +21,7 @@ def effective_load_accumulate_dijkstra_paths(P, start, dest):
         return [outp_common]
     return outp
 
-def effective_load_collect_all_shortest_paths(G):
+def _collect_all_shortest_paths(G):
     outp = {}
     for a in G:
         S, P, sigma = nx.betweenness._single_source_dijkstra_path_basic(G, a, 'weight')
@@ -32,13 +30,11 @@ def effective_load_collect_all_shortest_paths(G):
         # P now includes all paths starting from node a
         for b in G:
             if(a < b):
-                outp[a][b] = effective_load_accumulate_dijkstra_paths(P, a, b)
+                outp[a][b] = _accumulate_dijkstra_paths(P, a, b)
     return outp
 
 def effective_load(G, Verbose=False):
-    pathSets = effective_load_collect_all_shortest_paths(G) 
-    # TODO leave out the starts and ends from the paths, they don't hurt but
-    # are redundant so far
+    pathSets = _collect_all_shortest_paths(G) 
 
     # Prepare all available pairs of nodes that can communicate.
     # Problem is simplified to undirected graphs only!
